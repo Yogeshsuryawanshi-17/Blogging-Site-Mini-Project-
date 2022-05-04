@@ -8,17 +8,17 @@ router.get("/test-me", function (req, res) {
 })
 
 const AuthorController = require("../Controller/AuthorController")
-router.post("/CreateAuthor", AuthorController.CreateAuthor)
-router.post("/AuthorLogin", AuthorController.Authorlogin)
+router.post("/authors", AuthorController.CreateAuthor)
+router.post("/login", AuthorController.Authorlogin)
 
 
 const BlogController = require("../Controller/BlogController")
 const MiddleWare = require("../MiddleWare/auth")
-router.post("/CreateBlog", MiddleWare.authenticate, BlogController.CreateBlog)
-router.get("/getBlog", MiddleWare.authenticate, BlogController.getBlog)
-router.put("/Updateblogs/:blogId", MiddleWare.authenticate, MiddleWare.authorise, BlogController.UpdateBlog)
+router.post("/blogs", MiddleWare.authenticate, BlogController.CreateBlog)
+router.get("/blogs", MiddleWare.authenticate, BlogController.getBlog)
+router.put("/blogs/:blogId", MiddleWare.authenticate, MiddleWare.authorise, BlogController.UpdateBlog)
 router.delete("/blogs/:blogId", MiddleWare.authenticate, MiddleWare.authorise, BlogController.DeleteBlogbypathparam)
-router.delete("/DeleteBlogs", MiddleWare.authenticate, MiddleWare.verifyAuthorId,BlogController.DeleteBlogbyqueryparam)
+router.delete("/blogs", MiddleWare.authenticate, MiddleWare.verifyAuthorId,BlogController.DeleteBlogbyqueryparam)
 
 
 

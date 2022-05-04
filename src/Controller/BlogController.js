@@ -16,53 +16,56 @@ const CreateBlog = async function (req, res) {
         let blog = req.body
         if (Object.keys(blog).length != 0) {
 
-            if (req.body.author_id == null) {
-                return res.status(404).send("author_id is required ")
+            if (req.body.authorId == null) {
+                return res.status(400).send({ status: false, msg: "author_id is required " })
             }
             else {
-                if (req.body.author_id) {
-                    const isAuthor = await AuthorModel.findOne({ _id: req.body.author_id })
-                    if (!isAuthor) return res.status(400).send("Entered authorId is not valid")
+                if (req.body.authorId) {
+                    const isAuthor = await AuthorModel.findOne({ _id: req.body.authorId })
+                    if (!isAuthor) return res.status(400).send({ status: false, msg: "Entered authorId is not valid" })
                 }
 
             }
 
-            let { title, body, author_id, tags, category, subcategory } = blog
+            let { title, body, authorId, tags, category, subcategory } = blog
 
             if (!title) {
-                return res.status(400).send({ message: "Title is required" })
+                return res.status(400).send({ status: false, message: "Title is required" })
             }
 
             if (!body) {
-                return res.status(400).send({ message: "body is required" })
+                return res.status(400).send({ status: false, message: "body is required" })
             }
 
-            if (!author_id) {
-                return res.status(400).send({ message: "author_id is required" })
+            if (!authorId) {
+                return res.status(400).send({ status: false, message: "author_id is required" })
             }
 
             if (!tags) {
-                return res.status(400).send({ message: "Tags is required" })
+                return res.status(400).send({ status: false, message: "Tags is required" })
             }
 
             if (!category) {
-                return res.status(400).send({ message: "Category is required" })
+                return res.status(400).send({ status: false, message: "Category is required" })
             }
 
             if (!subcategory) {
-                return res.status(400).send({ message: "Subcategory is required" })
+                return res.status(400).send({ status: false, message: "Subcategory is required" })
             }
 
             let BlogCreated = await BlogModel.create(blog)
-            res.status(201).send({status:true,msg:"Blog created successfully" ,data: BlogCreated })
+
+
+
+            return res.status(201).send({ status: true, message: 'new blog created successfully', data: BlogCreated })
         }
         else {
-            res.status(400).send({ message: "BAD invalid request" });
+            res.status(400).send({ status: false, message: "BAD invalid request" });
         }
 
     }
     catch (err) {
-        res.status(400).send({ msg: "Error", ERROR: err.message })
+        res.status(500).send({ status: false, ERROR: err.message })
     }
 
 }
@@ -89,7 +92,7 @@ const getBlog = async function (req, res) {
 
     } catch (err) {
 
-        res.status(404).send({ status: false, msg: "NOT FOUND", ERROR: err.message });
+        res.status(500).send({ status: false, ERROR: err.message });
     }
 }
 
@@ -111,12 +114,12 @@ const UpdateBlog = async function (req, res) {
             return res.status(400).send({ status: false, msg: "invalid input" })
         }
 
-         let id = req.params.blogId;
+        let id = req.params.blogId;
 
         let blog = req.body
 
         if (Object.keys(blog).length == 0) {
-            res.status(404).send({ status: false, msg: "Data Required in body field" })
+            res.status(400).send({ status: false, msg: "Data Required in body field" })
         }
 
         if (req.body.isPublished == true) {
@@ -127,7 +130,7 @@ const UpdateBlog = async function (req, res) {
         const update = await BlogModel.findByIdAndUpdate({ _id: id, isDeleted: false }, { $set: req.body }, { new: true })
         res.status(201).send({ status: true, Msg: update })
     } catch (err) {
-        res.status(400).send({ status: false, MSG: err.message })
+        res.status(500).send({ status: false, MSG: err.message })
     }
 
 }
@@ -192,14 +195,11 @@ const DeleteBlogbyqueryparam = async function (req, res) {
         res.status(200).send({ status: true, msg: "The blog has been deleted successfully" });
     } catch (err) {
         res.status(500).send({ status: false, error: err.message });
-    
+
+    }
 }
-}
 
 
 
-module.exports.CreateBlog = CreateBlog
-module.exports.getBlog = getBlog
-module.exports.UpdateBlog = UpdateBlog
-module.exports.DeleteBlogbyqueryparam = DeleteBlogbyqueryparam
-module.exports.DeleteBlogbypathparam = DeleteBlogbypathparam
+
+module.exports = { CreateBlog, getBlog, UpdateBlog, DeleteBlogbypathparam, DeleteBlogbyqueryparam }
