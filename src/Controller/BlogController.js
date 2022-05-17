@@ -16,18 +16,18 @@ const CreateBlog = async function (req, res) {
         let blog = req.body
         if (Object.keys(blog).length != 0) {
 
-            if (req.body.authorId == null) {
+            if (!req.body.author_id) {
                 return res.status(400).send({ status: false, msg: "author_id is required " })
             }
             else {
-                if (req.body.authorId) {
-                    const isAuthor = await AuthorModel.findOne({ _id: req.body.authorId })
+                if (req.body.author_id) {
+                    const isAuthor = await AuthorModel.findOne({ _id: req.body.author_id })
                     if (!isAuthor) return res.status(400).send({ status: false, msg: "Entered authorId is not valid" })
                 }
 
             }
 
-            let { title, body, authorId, tags, category, subcategory } = blog
+            let { title, body, author_id, tags, category, subcategory } = blog
 
             if (!title) {
                 return res.status(400).send({ status: false, message: "Title is required" })
@@ -37,7 +37,7 @@ const CreateBlog = async function (req, res) {
                 return res.status(400).send({ status: false, message: "body is required" })
             }
 
-            if (!authorId) {
+            if (!author_id) {
                 return res.status(400).send({ status: false, message: "author_id is required" })
             }
 
@@ -54,8 +54,6 @@ const CreateBlog = async function (req, res) {
             }
 
             let BlogCreated = await BlogModel.create(blog)
-
-
 
             return res.status(201).send({ status: true, message: 'new blog created successfully', data: BlogCreated })
         }
